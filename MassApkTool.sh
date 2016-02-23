@@ -6,6 +6,22 @@
 #批量反编译
 #----------------------
 
+
+function apkSigner(){
+
+echo "for signer="$1
+
+keyPath="这边输入签名路径"
+keyName="签名名称"
+keyPass="签名密码"
+
+package=$1
+newName=${package%%.*}"-Signed.apk"
+
+jarsigner -verbose -keystore $keyPath -signedjar $newName $package $keyName -storepass $keyPass
+
+}
+
 function apktoolUpZip(){
 
 echo $1,$2;
@@ -44,9 +60,8 @@ echo '输入要反编译的文件夹目录'
 
 read sources
 
-DIR="$( cd "$( dirname "$0"  )" && pwd  )"
-sourcesFlorder=$DIR"/"$sources
-targetFlorder=$DIR"/"$sources"Track" 
+sourcesFlorder=$sources
+targetFlorder=$sources"Track" 
 if [ ! -d "$sourcesFlorder" ]; then
 
 		echo "没有该目录 请检查目录是否正确！"
@@ -90,6 +105,7 @@ newName=${name%%.*}"NewBuild.apk"
 if [ ! -d "$2" ]; then
 
 		apktool b $1 -o $newName
+		apkSigner $newName 
 
 		echo $newName"打包完成"
 else
